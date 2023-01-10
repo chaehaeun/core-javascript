@@ -21,3 +21,13 @@ h1 {
 div{
  
 }
+
+span{
+  display: inline-block;
+  transition:all .5s;
+}
+
+span.is-active{
+  transform: translateY(-300px);
+  
+}
