@@ -1,10 +1,13 @@
 /* readyState
+import { xhrData } from './xhr';
   0 : uninitalized // 초기화
   1 : loading // 로딩
   2 : loaded // 로딩완료
   3 : interactive // 작동 중인 단계
   4 : complete // 완료된 단계
 */
+
+import { typeError } from "../error/typeError.js";
 
 // 객체 구조 분해 할당
 export const xhrData = ({
@@ -113,3 +116,66 @@ xhrData.put = (url, onSuccess, onFail) => {
 //     console.log(err);
 //   }
 // );
+
+// promise API
+const defaultOptions = {
+  url: "",
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
+  body: null,
+};
+
+export const xhrPromise = (options = {}) => {
+  const xhr = new XMLHttpRequest();
+
+  const { method, url, body, headers } = Object.assign(
+    {},
+    defaultOptions,
+    options
+  );
+
+  if (!url) typeError("서버와 통신할 url 인자는 반드시 필요합니다.");
+
+  xhr.open(method, url);
+
+  xhr.send(body ? JSON.stringify(body) : null);
+
+  return new Promise((resolve, reject) => {
+    xhr.addEventListener("readystatechange", () => {
+      const { status, readyState, response } = xhr;
+
+      if (status >= 200 && status < 400) {
+        if (readyState === 4) {
+          resolve(JSON.parse(response));
+        }
+      } else {
+        reject("에러입니다");
+      }
+    });
+  });
+};
+
+// xhrPromise({ url: "https://jsonplaceholder.typicode.com/users" })
+//   .then((res) => {
+//     console.log(res);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+xhrPromise.get = (url) => {
+  return xhrPromise({
+    url,
+  });
+}; // promise 객체를 반환해야 되기 때문에 내부에 다시 xhrPromise 호출
+
+xhrPromise.post = (url, body) => {
+  return xhrPromise({
+    url,
+    body,
+    method: "POST",
+  });
+};
