@@ -11,26 +11,23 @@ const defaultOptions = {
 };
 
 // 콜백의 가독성을 위해서 프라미스 사용
-export const delayP = (options = {}) => {
-  let config = { ...defaultOptions };
+// export const delayP = (options = {}) => {
+//   let config = { ...defaultOptions };
 
-  if (isNumber(options)) {
-    config.timeout = options;
-  }
+//   if (isNumber(options)) {
+//     config.timeout = options;
+//   }
 
-  // 객체 합성 mixin
-  if (isObject(options)) {
-    config = { ...config, ...options };
-  }
-
-  const { shouldReject, data, errorMessage, timeout } = config;
-
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      !shouldReject ? resolve(data) : reject(errorMessage);
-    }, timeout);
-  });
-};
+//   // 객체 합성 mixin
+//   if (isObject(options)) {
+//     config = { ...config, ...options };
+//   }
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+// !shouldReject ? resolve(data) : reject(errorMessage);
+//     }, timeout);
+//   });
+// };
 
 // 콜백지옥을 프라미스로
 // delayP()
@@ -65,30 +62,48 @@ export const delayP = (options = {}) => {
 // await : 1.promise가 반환하는 result를 가져오기
 //         2. 코드 실행 흐름 제어
 
-const delayA = async () => {
-  return "완료";
-};
+// const delayA = async () => {
+//   return "완료";
+// };
 
-let result = await delayA();
+// let result = await delayA();
 
-console.log(result);
+// console.log(result);
 
 //
 
-const 라면끓이기 = async () => {
-  try {
-    await delayP(1500);
-    first.style.top = "-100px";
-    await delayP(1500);
-    first.style.transform = "rotate(360deg)";
-    await delayP(1500);
-    first.style.top = "0px";
+// const 라면끓이기 = async () => {
+//   try {
+//     await delayP(1500);
+//     first.style.top = "-100px";
+//     await delayP(1500);
+//     first.style.transform = "rotate(360deg)";
+//     await delayP(1500);
+//     first.style.top = "0px";
 
-    await delayA();
-    // throw new Error("계란껍질 어쩌고");
-  } catch (err) {
-    console.log(err);
+//     await delayA();
+//     // throw new Error("계란껍질 어쩌고");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
+// 라면끓이기();
+
+export function delayP(options = {}) {
+  let config = { ...defaultOptions }; // spread 통해서 얕은 복사 : 기본값
+
+  if (isNumber(options)) {
+    config.timeout = options;
   }
-};
+  if (isObject(options)) {
+    config = { ...config, ...options }; // 기본값이 아닌 새로 받은 값을 섞기 위해 객체를 합성함 : 객체 합성 mixin
+  }
 
-라면끓이기();
+  const { shouldReject, timeout, data, errorMessage } = config;
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      !shouldReject ? resolve("성공!") : reject(errorMessage);
+    }, timeout);
+  });
+}
