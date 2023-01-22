@@ -1,4 +1,25 @@
-export const isNumericString = (data) => {
+
+export function isNumericString(data){
   data = Number(data);
-  return !isNaN(data);
-};
+  return !isNaN(data)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
